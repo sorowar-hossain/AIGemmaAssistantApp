@@ -1,0 +1,324 @@
+ Your current knowledge map
+
+ We'll revise in this order:
+
+        NLP — what it is
+        Tokenization — text → tokens
+        Token IDs — tokens → numbers
+        Embeddings — numbers → vectors
+        Attention — It allows model that how tokens relate to each other
+                   /which other tokens are important for understanding a particular token.
+        Self-Attention — each token looks at other tokens within same input/sentence
+              /Self-attention helps the model to understand which surrounding words provide useful context.
+        Q, K, V — Query, Key, Value
+        Attention Score
+        Softmax — scores → attention weights
+        Weighted Sum — creating contextual information
+        Multi-Head Attention
+        Transformer
+        Encoder / Decoder
+        BERT and GPT
+        Embeddings vs LLM
+        RAG — connecting everything back to your project
+
+        Query → What information am I looking for?
+
+        Key   → What information do I contain?
+
+        Value → What information should I provide?
+       **** For every token, the model creates a Query, Key, and Value vector.
+       Tokens
+
+        How does attention work?
+
+           Very simplified:
+              ↓
+            Create Q, K, V
+              ↓
+            Compare Q with K
+              ↓
+            Calculate attention scores
+              ↓
+            Softmax
+              ↓
+            Attention weights
+              ↓
+            Combine V
+              ↓
+            New contextual representation
+
+Q asks → K determines relevance → V provides information.
+
+And softmax converts the attention scores into weights.
+    Attention(Q, K, V) = softmax(QKᵀ / √dₖ)V
+
+*******************details
+
+Next topic: Q, K, V in more detail.
+
+You already understand the calculation, so now let's understand why we need three different vectors.
+
+Q = Query
+
+The Query represents:
+
+"What information am I looking for?"
+
+For example, when processing:
+
+"The employee submitted the application because he was sick."
+
+For the token "he", its Query helps determine what information it needs from the other tokens.
+
+K = Key
+
+The Key represents:
+
+"What kind of information do I contain?"
+
+Every token has a Key.
+
+The model compares:
+
+Query of "he"
+        ↓
+Keys of all tokens
+
+If the Query and a Key match strongly, that token receives a higher attention score.
+
+V = Value
+
+The Value represents:
+
+"What actual information should I provide if you pay attention to me?"
+
+After determining which tokens are important, the model uses their Values to create the new representation.
+
+Simple analogy
+
+Imagine a database search:
+
+Query
+  ↓
+"What am I looking for?"
+
+Key
+  ↓
+"Does this record match the search?"
+
+Value
+  ↓
+"Here is the actual information from the record."
+
+So:
+
+Q → asks
+K → matches
+V → provides
+Complete Self-Attention
+Token embeddings
+       ↓
+   ┌───┼───┐
+   ↓   ↓   ↓
+   Q   K   V
+       ↓
+   Q × Kᵀ
+       ↓
+ Attention Scores
+       ↓
+    Softmax
+       ↓
+ Attention Weights
+       ↓
+   Weights × V
+       ↓
+New contextual vectors
+
+One sentence to remember:
+
+Query finds what is relevant, Key determines how relevant it is, and Value provides the information.
+*************************end****************************
+
+
+***********Multi Head attention*********
+What is Multi-Head Attention?
+
+Instead of doing one attention operation, the Transformer does several attention operations in parallel.
+
+These are called heads.
+
+            Input
+              ↓
+ ┌──────────┬──────────┬──────────┐
+ ↓          ↓          ↓
+Head 1     Head 2     Head 3
+ ↓          ↓          ↓
+Attention  Attention  Attention
+ └──────────┼──────────┘
+            ↓
+        Concatenate
+            ↓
+      Final projection
+
+So:
+
+Multi-Head Attention = multiple attention heads working on the same input, 
+each learning different relationships.
+
+2. Why do we need multiple heads?
+
+Consider:
+
+"The employee submitted the leave application because he was sick."
+
+Different relationships may be useful.
+
+One attention head might learn:
+
+"he" → "employee"
+
+Another might focus on:
+
+"submitted" → "application"
+
+Another might focus on:
+
+"leave" → "application"
+
+So different heads can learn different types of relationships.
+
+You can think of them as different "ways of looking at" the same sentence.
+
+
+With multiple heads:
+                 ┌→ Attention Head 1 ─┐
+Input ───────────┼→ Attention Head 2 ─┼→ Concatenate → Output
+                 ├→ Attention Head 3 ─┤
+                 └→ Attention Head 4 ─┘
+
+ Transformer
+│
+├── Tokenization
+│
+├── Token IDs
+│
+├── Embedding
+│
+├── Positional Information
+│
+├── Transformer Block
+│    │
+│    ├── Multi-Head Self-Attention
+│    │    │
+│    │    ├── Query (Q)
+│    │    ├── Key (K)
+│    │    ├── Value (V)
+│    │    ├── Attention Score
+│    │    ├── Scaling (÷ √dₖ)
+│    │    └── Softmax
+│    │
+│    ├── Residual Connection / Add
+│    │       └── X + Attention(X)
+│    │
+│    ├── LayerNorm
+│    │
+│    ├── Feed-Forward Network
+│    │
+│    ├── Residual Connection / Add ,  ==> X + Attention(X)
+│    │
+│    └── LayerNorm / Normalizatoin layer, 
+│                                       Very simply, normalization keeps the values in a more manageable
+│                                      range and helps make neural-network training stable.
+│
+└── Output
+
+
+
+
+ Attention and FFN have different jobs:
+
+| Component            | Main job                                   |
+| -------------------- | ------------------------------------------ |
+| Self-Attention       | Exchange information between tokens        |
+| Feed-Forward Network | Process/transform each token's information |
+| LayerNorm            | Keep representations stable                |
+| Residual/Add         | Preserve and reuse previous information  
+                       |"Keep the original information, then add what the attention layer learned."
+| Positional Encoding  | Provide token-position information         |
+
+
+If these four ideas are clear, you've understood the core of a Transformer encoder layer.
+
+
+
+The original Transformer architecture has two major parts:
+                Transformer
+                    │
+          ┌─────────┴─────────┐
+          ↓                   ↓
+       Encoder             Decoder
+          ↓                   ↓
+   Understand input       Generate output
+
+A simple mental model:
+    Encoder = understand the input
+    Decoder = generate the output
+
+    Encoder
+
+Suppose the input is:
+
+"The employee applied for leave."
+
+The Encoder processes the entire input and creates contextual representations.
+
+Input
+ ↓
+Tokenization
+ ↓
+Token IDs
+ ↓
+Embedding + Positional Information
+ ↓
+Encoder
+ ↓
+Contextual representations
+
+
+
+Inside the Encoder:
+
+Encoder
+│
+├── Multi-Head Self-Attention
+├── Add + LayerNorm
+├── Feed-Forward Network
+└── Add + LayerNorm
+
+There can be multiple encoder layers:
+
+Input
+ ↓
+Encoder Layer 1
+ ↓
+Encoder Layer 2
+ ↓
+Encoder Layer 3
+ ↓
+...
+ ↓
+Encoder Output
+
+********************
+
+What is ONNX Runtime?
+
+ONNX Runtime (ORT) is a machine-learning inference engine.
+
+In simple terms:
+
+ONNX Runtime runs a trained AI model and gives you its output.
+
+It does not train the model. It executes the already-trained model.
+
+************************

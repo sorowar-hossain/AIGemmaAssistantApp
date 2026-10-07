@@ -1,0 +1,29 @@
+STEP 1   Understand RAG architecture
+   ↓
+STEP 2   Create C# project
+   ↓
+STEP 3   Read PDF
+   ↓
+STEP 4   Extract and clean text
+   ↓
+STEP 5   Understand chunking
+   ↓
+STEP 6   Implement multiple chunking strategies
+   ↓
+STEP 7   Create embeddings
+   ↓
+STEP 8   Store vectors
+   ↓
+STEP 9   Embed user question
+   ↓
+STEP 10  Vector similarity search
+   ↓
+STEP 11  Evaluate retrieval
+   ↓
+STEP 12  Build RAG context
+   ↓
+STEP 13  Send context + question to LLM
+   ↓
+STEP 14  Generate final answer
+   ↓
+STEP 15  Improve RAG

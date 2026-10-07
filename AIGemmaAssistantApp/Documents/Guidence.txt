@@ -1,0 +1,24 @@
+
+NLP
+ ├─ FAQ Search                  ✅
+ ├─ Resume Search               ✅
+ └─ Similar Document Finder     ✅
+
+ML
+ ├─ Spam Detection              ✅
+ ├─ Sentiment Analysis          ✅
+ └─ Intent Classification       ✅
+
+Modern NLP
+ ├─ Semantic Search             ✅
+ └─ Local Vector Search         ✅
+
+RAG
+ └─ PDF Chatbot                 ⚠️ Chunking needs improvement
+
+LLM
+ ├─ Email Generator             ✅
+ └─ SQL Assistant               ✅
+
+AI Agent
+ └─ Database Assistant          ✅
