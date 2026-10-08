@@ -383,9 +383,72 @@ Sequence:
 
 And self-attention helps each token look at the other tokens in that sequence and determine which ones are important.
 
+*****************************
+⭐ Complete generation flow
+
+You now know almost the entire generation process:
+                 USER PROMPT
+                      ↓
+                  Tokenizer
+                      ↓
+                  Token IDs
+                      ↓
+                 Embeddings => Token ID → vector used internally by the LLM.
+                      ↓
+                 Transformer => Neural Network Architecture or Behind the Architecture of LLMs model
+                      ↓
+                Self-Attention  => Self-attention mainly allows tokens to exchange information.
+                                   Attention helps the model understand relationships between words.
+                      ↓
+                    FFN => Feed-Forward Network (also called Feed-Forward Neural Network)
+                            Then FFN takes the resulting representation and performs 
+                            additional nonlinear transformations on it.
+                      
+                      ↓
+                  Logits => raw scores for each possible next token. the model produce it
+                      ↓
+                 Temperature => controls the randomness/variability of token selection.
+                      ↓
+                  Softmax => Softmax converts logits (raw scores) into probabilities.
+                      ↓
+              Probability Distribution => A probability assigned to every possible next token
+                      ↓
+              Top-K / Top-P =>, K = 3 → keep only the top 3 tokens.
+                                Top-P → Keep the smallest group of tokens whose cumulative probability reaches P.
+                      ↓
+                  Sampling => choosing the next token from the remaining probability distribution.
+                      ↓
+                Next Token
+                      ↓
+              Add to context => include previous information in the model's current input 
+                                so it can use that information when generating the next response.
+                      ↓
+                 Transformer
+                      ↓
+                  Next Token
+                      ↓
+                    ...
+                      ↓
+                  EOS(End Of Sequence) / Stop => The response is finished. Stop generating
+                      ↓
+                 Decode Tokens => convert token IDs back into human-readable text.
+                      ↓
+                  Final Answer
+
+🧠 Remember these four
+
+This is the important part to memorize:
+
+| Concept         | Simple meaning                                 |
+| --------------- | ---------------------------------------------- |
+| **Logits**      | Raw scores for possible next tokens            |
+| **Temperature** | Controls randomness                            |
+| **Top-K**       | Keep the best K candidates                     |
+| **Top-P**       | Keep candidates covering probability P         |
+| **Sampling**    | Choose one token from the remaining candidates |
 
 
-
+You've now completed the basic LLM text-generation theory. 🎯
 
 
 
