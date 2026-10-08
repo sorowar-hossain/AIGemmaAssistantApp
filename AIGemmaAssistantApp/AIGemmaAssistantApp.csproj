@@ -8,6 +8,36 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="AIModels\Gemma2-2B-INT4\chat_template.jinja" />
+    <None Remove="AIModels\Gemma2-2B-INT4\genai_config.json" />
+    <None Remove="AIModels\Gemma2-2B-INT4\model.onnx" />
+    <None Remove="AIModels\Gemma2-2B-INT4\model.onnx.data" />
+    <None Remove="AIModels\Gemma2-2B-INT4\tokenizer.json" />
+    <None Remove="AIModels\Gemma2-2B-INT4\tokenizer_config.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="AIModels\Gemma2-2B-INT4\chat_template.jinja">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="AIModels\Gemma2-2B-INT4\genai_config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="AIModels\Gemma2-2B-INT4\model.onnx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="AIModels\Gemma2-2B-INT4\model.onnx.data">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="AIModels\Gemma2-2B-INT4\tokenizer.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="AIModels\Gemma2-2B-INT4\tokenizer_config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.ML.OnnxRuntimeGenAI" Version="0.17.1" />
   </ItemGroup>
 

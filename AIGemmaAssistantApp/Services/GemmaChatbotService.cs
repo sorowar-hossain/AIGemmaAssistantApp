@@ -80,7 +80,9 @@ namespace AIGemmaAssistantApp.Services
 
             //string userAsk = "How to learn english?";
 
-            string userAsk = "how far distance from gulshan 2 to Notunbazar in dhaka bangladesh";
+            //string userAsk = "how far distance from gulshan 2 to Notunbazar in dhaka bangladesh";
+
+            string userAsk = "how to improve my AI.Net skill day by day";
 
             var messages = new[]
             {
