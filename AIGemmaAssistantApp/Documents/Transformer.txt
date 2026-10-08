@@ -1,3 +1,72 @@
+ 
+ **************Transformer***************
+
+A Transformer is a type of neural network architecture designed to understand relationships between 
+words/tokens in a sequence. It is the architecture behind models 
+such as Gemma, GPT, BERT, and many other modern LLMs.
+
+In this context, “sequence” simply means an ordered list of tokens.
+
+For example, take this sentence:
+
+"I love C# programming"
+
+After tokenization, it might become something like:
+
+["I", "love", "C#", "programming"]
+
+This is a sequence because the tokens have a specific order:
+
+1 → I
+2 → love
+3 → C#
+4 → programming
+Why does order matter?
+
+Compare:
+
+"I love C#"
+
+with:
+
+"C# love I"
+
+They contain similar words, but the order is different, so the meaning is different.
+
+That's why a Transformer needs to understand the relationship between tokens within a sequence.
+
+In ML/LLM terminology
+
+You can think of it like this:
+
+Sentence
+   ↓
+Tokenizer
+   ↓
+Token IDs
+   ↓
+[101, 2057, 2293, 1046, ...]
+   ↑
+   └── This ordered collection is a sequence
+
+So when I said:
+
+“Transformers understand relationships between words/tokens in a sequence.”
+
+I simply meant:
+
+Transformers understand how tokens relate to each other while considering their order in the input.
+
+For example:
+
+"The cat eats fish"
+
+Sequence:
+[The] → [cat] → [eats] → [fish]
+
+And self-attention helps each token look at the other tokens in that sequence and determine which ones are important.
+
+ 
  Your current knowledge map
 
  We'll revise in this order:
@@ -217,8 +286,8 @@ Input ───────────┼→ Attention Head 2 ─┼→ Concate
 │    │    ├── Scaling (÷ √dₖ)
 │    │    └── Softmax
 │    │
-│    ├── Residual Connection / Add
-│    │       └── X + Attention(X)
+│    ├
+│    │      
 │    │
 │    ├── LayerNorm
 │    │
