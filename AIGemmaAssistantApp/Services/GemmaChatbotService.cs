@@ -1,4 +1,5 @@
-﻿using Microsoft.ML.OnnxRuntimeGenAI;
+﻿using Microsoft.Extensions.AI;
+using Microsoft.ML.OnnxRuntimeGenAI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,8 +54,6 @@ namespace AIGemmaAssistantApp.Services
              */
 
 
-
-
             string modelPath = Path.Combine(
                 AppContext.BaseDirectory,
                 "AIModels",
@@ -69,45 +68,22 @@ namespace AIGemmaAssistantApp.Services
                 modelPath,
                 "chat_template.jinja");
 
-            Console.WriteLine($"Template path: {templatePath}");
+            //Console.WriteLine($"Template path: {templatePath}");
 
             string chatTemplate = File.ReadAllText(templatePath);
 
-            //  Please provide me with a question or a task you'd like me to help you with!▁▁
-            //string userAsk = "What is C#?";
-            //string userAsk = "how to improvement my technical skill?";
-            //string userAsk = "Tell me about footballer Messi";
+            // Store conversation history.
+            var history = new List<ChatMessage>();
 
-            //string userAsk = "How to learn english?";
+            Console.WriteLine("Gemma is ready!");
+            Console.WriteLine("Type 'exit' to quit.");
+            Console.WriteLine();
 
-            //string userAsk = "how far distance from gulshan 2 to Notunbazar in dhaka bangladesh";
-
-            string userAsk = "how to improve my AI.Net skill day by day";
-
-            var messages = new[]
-            {
-                new
-                {
-                    role = "user",
-                    content = userAsk
-                }
-            };
-
-            string messagesJson = JsonSerializer.Serialize(messages);
-
-            Console.WriteLine("Messages JSON:");
-            Console.WriteLine(messagesJson);
-
-            string formattedPrompt = tokenizer.ApplyChatTemplate(
-                chatTemplate,
-                messagesJson,
-                "",
-                true);
-
-            Console.WriteLine("Formatted prompt:");
-            Console.WriteLine(formattedPrompt);
+           
 
             /*
+          
+
                 That means Gemma now understands:
 
                 <start_of_turn>user
@@ -132,7 +108,6 @@ namespace AIGemmaAssistantApp.Services
                 Generator
                      ↓
                 Gemma response
-             */
 
             // Convert prompt → token IDs
             var sequences = tokenizer.Encode(formattedPrompt);
@@ -166,12 +141,99 @@ namespace AIGemmaAssistantApp.Services
                     Console.Write(tokenizerStream.Decode(token));
                 }
             }
+            */
 
-            Console.WriteLine();
+            // Interactive chatbot loop
+            while (true)
+            {
+                Console.Write("You: ");
+                string? userInput = Console.ReadLine();
+
+                if (string.IsNullOrWhiteSpace(userInput))
+                    continue;
+
+                if (userInput.Equals(
+                    "exit",
+                    StringComparison.OrdinalIgnoreCase))
+                {
+                    break;
+                }
+
+                // Add the user's message to history.
+                history.Add(new ChatMessage("user", userInput));
+
+                string messagesJson = JsonSerializer.Serialize(history);
+
+                string formattedPrompt = tokenizer.ApplyChatTemplate(
+                    chatTemplate,
+                    messagesJson,
+                    "",
+                    true);
+
+                // Convert prompt → token IDs
+                var sequences = tokenizer.Encode(formattedPrompt);
+
+                // Configure generation
+                using var generatorParams = new GeneratorParams(model);
+
+                generatorParams.SetSearchOption("max_length", 4096);
+
+                // Create generator
+                using var generator = new Generator(model, generatorParams);
+
+                // Give prompt tokens to Gemma
+                generator.AppendTokenSequences(sequences);
+
+                // Token stream for readable output
+                using var tokenizerStream = tokenizer.CreateStream();
+
+                var answer = new StringBuilder();
+
+                Console.WriteLine();
+                Console.Write("Gemma: ");
+
+                // Generate response
+                while (!generator.IsDone())
+                {
+                    generator.GenerateNextToken();
+
+                    var outputTokens = generator.GetNextTokens();
+
+                    foreach (var token in outputTokens)
+                    {
+                        string piece = tokenizerStream.Decode(token);
+
+                        Console.Write(piece);
+                        answer.Append(piece);
+                    }
+                }
+
+                Console.WriteLine();
+                Console.WriteLine();
+
+                // Save Gemma's answer for future questions.
+                history.Add(new ChatMessage("assistant", answer.ToString()));
+            }
+
+            Console.WriteLine("Chatbot closed.");
         }
+
+        /*
+            In your Gemma chatbot, this line defines a C# record named ChatMessage. 
+                It represents one message in the conversation, including who sent it and what they said.
+            public record ChatMessage(string role, string content);
+
+
+            1. What do role and content mean?
+            - role — identifies who sent the message, such as "user" or "assistant".
+            - content — contains the actual message text.
+         */
+        public record ChatMessage(string role, string content);
+
 
     }
 }
+
 
 /*
     Full Gemma Flow

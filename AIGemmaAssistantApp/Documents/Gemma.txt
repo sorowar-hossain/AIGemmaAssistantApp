@@ -466,5 +466,184 @@ You've now completed the basic LLM text-generation theory. 🎯
 
 
 
+**************************************************************************
+
+Lesson 1: Context Window
+1. What is a Context Window?
+
+A context window is the maximum number of tokens a model can process as its current context.
+
+Think of it as the model's working space. It can include the current question, previous conversation messages, 
+        and other supplied information.
+
+For example, 
+    suppose a model has a context window of 4,096 tokens.
+Context Window
+4,096 tokens = Question + History + Answer
 
 
+Illustration only: the context is shared by the prompt and generated tokens, subject to the model's and runtime's limits.
+
+The 4,096-token limit here is an example, not a statement that every Gemma configuration has that exact limit.
+
+2. What counts as a token?
+Tokens are pieces of text, not necessarily whole words.
+For example:
+Input:
+"What is C#?"
+
+Possible tokenization:
+["What", " is", " C", "#", "?"]
+
+This is illustrative; the actual tokenization depends on the tokenizer.
+The model counts tokens, not simply words or characters.
+
+ ***What happens when the context becomes too large?
+Imagine a conversation keeps growing:
+Question 1
+    ↓
+Answer 1
+    ↓
+Question 2
+    ↓
+Answer 2
+    ↓
+More conversation...
+
+
+Eventually, the available context capacity can be reached. The application may need to shorten the conversation,
+remove older messages, or summarize previous history to fit within the limit.
+
+Important: A context window is not the same as long-term memory. 
+Information outside the current context is not automatically available to the model.
+
+4. Connection to your Gemma project
+Remember the error you encountered?
+KV cache capacity (200) must be at least
+local_window_size (4096).
+
+
+You changed max_length to 4096, and generation worked.
+That error relates to the model's required cache capacity and its local attention window.
+We'll connect these concepts in the next lesson.
+
+5. Quick check
+If a model has a context window of 4,096 tokens, what does that limit describe?
+
+The maximum number of words in every response
+
+The token capacity available for the model's current context, including input and potentially generated output
+
+The number of parameters in the model
+
+
+************************ KV Cache (Key-Value Cache)  **************
+
+What is KV Cache?
+1. First, understand the problem
+Suppose you ask Gemma:
+"Explain how C# works."
+
+Gemma generates its answer one token at a time:
+
+Token 1: C#
+Token 2: is
+Token 3: a
+Token 4: programming
+Token 5: language
+...
+
+To generate each new token, the Transformer uses attention to consider relevant previous tokens.
+Without a cache, the model would repeatedly calculate the attention keys and values for tokens 
+it has already processed.
+
+*****The KV Cache stores the previously calculated Key and Value vectors so the model can reuse them 
+when generating the next token.
+
+Simple example
+Imagine Gemma is generating this response:
+C# is a powerful programming language.
+Generation step	What happens
+
+
+Generate C#	Process the prompt and build initial cache entries
+Generate is	Reuse cached K/V and add entries for newly processed tokens
+Generate a	Reuse the cache again and extend it
+Generate powerful	Continue reusing and updating the cache
+
+The exact internal processing depends on the model and runtime, 
+but the central idea is the same: reuse previous K/V calculations rather than recomputing them all.
+
+4. Why is KV Cache important?
+- Faster generation: reduces repeated attention computation.
+- Better efficiency: particularly useful when generating long responses.
+- Memory trade-off: cached K/V tensors consume memory, and their size generally grows as more tokens are retained.
+Remember: KV Cache improves generation efficiency; 
+it does not give the model permanent memory of past conversations.
+
+
+**************************** Context Window vs. KV Cache******************
+
+The main difference
+
+Context Window
+The maximum number of tokens the model can consider in its current context, 
+including the input and, subject to the configured limits, generated tokens.
+Think: How much information fits?
+
+
+
+
+KV Cache
+Stores previously calculated Key and Value tensors so the model can reuse them 
+during autoregressive generation.
+Think: Which calculations can be reused?
+
+The model processes the current conversation as its context.
+- The context window limits how many tokens can fit in that context.
+- The KV Cache helps the model avoid recalculating previously processed tokens' 
+    attention keys and values when generating the next answer.
+
+  ********  Connect this to your C# code
+            generatorParams.SetSearchOption("max_length", 4096);
+
+
+*** What is streaming?
+Streaming means displaying the model's response as it generates it, 
+instead of waiting for the entire response to finish.
+
+How does your Gemma code already support streaming?
+In your existing C# console app, you used:
+
+using var tokenizerStream = tokenizer.CreateStream();
+
+while (!generator.IsDone())
+{
+    generator.GenerateNextToken();
+
+    var outputTokens = generator.GetNextTokens();
+
+    foreach (var token in outputTokens)
+    {
+        Console.Write(tokenizerStream.Decode(token));
+    }
+}
+
+
+Let's understand each part.
+Code	            Purpose
+CreateStream()	    Creates a decoder that converts generated tokens into readable text incrementally.
+IsDone()	        Checks whether generation has finished.
+GenerateNextToken()	Advances generation by one step.
+GetNextTokens()	    Retrieves the newly generated token IDs.
+Decode(token)	    Converts each generated token into text.
+Console.Write(...)	Displays the text immediately without automatically adding a new line.
+
+Important: Console.Write() is what lets the text appear incrementally in the console. 
+Console.WriteLine() would add a newline after each call.
+
+
+*****Next, 
+we can turn this into a more complete interactive console chatbot that accepts multiple questions,
+keeps conversation history, and streams each response. 
+That will prepare us to integrate Gemma + your existing RAG pipeline.
