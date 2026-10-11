@@ -37,13 +37,6 @@ Practice: 3–5 sessions
 
 
 
-
-
-
-
-
-
-
 4. Build a complete C# AI assistant
 Portfolio project
 - Create an ASP.NET Core Web API.
