@@ -403,15 +403,29 @@ You now know almost the entire generation process:
                     FFN => Feed-Forward Network (also called Feed-Forward Neural Network)
                             Then FFN takes the resulting representation and performs 
                             additional nonlinear transformations on it.
+
+                            FFN processes the vector representation of each token, using information that 
+                            the token representation has received from self-attention.
+
+                            Important: FFN does not directly produce words or the final answer. 
+                            It produces transformed vectors that help the model eventually predict the next token.
                       
+                            The key idea: Self-Attention helps a token use information from other tokens; 
+                            FFN processes the representation it has received. 
+                            Together, they help Gemma understand context and generate its response.
                       ↓
                   Logits => raw scores for each possible next token. the model produce it
                       ↓
                  Temperature => controls the randomness/variability of token selection.
+                                The key is that temperature changes the probability distribution, not the model's learned knowledge.
+                                    - Low temperature: more predictable output.
+                                    - High temperature: more varied output.
+                                    - Temperature = 1: leaves logits unchanged before Softmax.
                       ↓
                   Softmax => Softmax converts logits (raw scores) into probabilities.
                       ↓
-              Probability Distribution => A probability assigned to every possible next token
+              Probability Distribution => A probability distribution shows how likely each possible next token is.
+                                        A probability assigned to every possible next token
                       ↓
               Top-K / Top-P =>, K = 3 → keep only the top 3 tokens.
                                 Top-P → Keep the smallest group of tokens whose cumulative probability reaches P.
