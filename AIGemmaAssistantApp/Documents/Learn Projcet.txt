@@ -1,0 +1,18 @@
+
+My Recommendation for You
+Since you're a 10+ year C# developer, I would build these 12 portfolio projects:
+
+Phase					Project	Difficulty
+NLP							FAQ Search Engine	⭐⭐
+NLP							Resume Search	⭐⭐⭐
+NLP							Similar Document Finder	⭐⭐⭐
+ML							Spam Detection	⭐⭐
+ML							Sentiment Analysis	⭐⭐⭐
+ML							Intent Classification	⭐⭐⭐
+Modern NLP					Semantic Search	⭐⭐⭐⭐
+
+Vector Search				Local Vector Search	⭐⭐⭐⭐
+RAG							PDF Chatbot	⭐⭐⭐⭐⭐
+LLM							Email Generator	⭐⭐⭐
+LLM							SQL Assistant	⭐⭐⭐⭐
+AI Agent					Database Assistant	⭐⭐⭐⭐⭐

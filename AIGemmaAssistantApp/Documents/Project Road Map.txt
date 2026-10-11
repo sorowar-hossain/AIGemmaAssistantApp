@@ -1,0 +1,52 @@
+
+
+Your next AI learning roadmap
+
+Create Gemma chatbot 
+	- Multiple question & Answer
+
+
+
+2. Improve your Gemma chatbot
+Next
+
+Practice: 1–2 sessions
+- Handle empty input and exceptions.
+- Add a clear command to reset history.
+- Add a help command and cleaner console output.
+- Store the generated response in conversation history correctly.
+
+
+
+3. Manage context window and KV Cache
+Practice: 1–2 sessions
+- Understand how conversation history consumes tokens.
+- Learn why long conversations become expensive.
+- Explore how the model reuses previous attention calculations.
+
+
+
+4. Integrate Gemma with your existing RAG project
+Practice: 3–5 sessions
+- Load your PDF documents.
+- Retrieve the most relevant chunks using MiniLM.
+- Send the retrieved context and question to Gemma.
+- Generate an answer grounded in your documents.
+
+
+
+
+
+
+
+
+
+
+
+
+4. Build a complete C# AI assistant
+Portfolio project
+- Create an ASP.NET Core Web API.
+- Connect the local Gemma model.
+- Add document search and chat history.
+- Build a Blazor interface.
