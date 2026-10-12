@@ -113,39 +113,7 @@ namespace AIGemmaAssistantApp.Services
                          ↓
                     Gemma response
 
-                // Convert prompt → token IDs
-                var sequences = tokenizer.Encode(formattedPrompt);
-
-                // Configure generation
-                using var generatorParams = new GeneratorParams(model);
-
-                generatorParams.SetSearchOption("max_length", 4096);
-
-                // Create generator
-                using var generator = new Generator(model, generatorParams);
-
-                // Give prompt tokens to Gemma
-                generator.AppendTokenSequences(sequences);
-
-                // Token stream for readable output
-                using var tokenizerStream = tokenizer.CreateStream();
-
-                Console.WriteLine("Gemma:");
-                Console.WriteLine();
-
-                // Generate response
-                while (!generator.IsDone())
-                {
-                    generator.GenerateNextToken();
-
-                    var outputTokens = generator.GetNextTokens();
-
-                    foreach (var token in outputTokens)
-                    {
-                        Console.Write(tokenizerStream.Decode(token));
-                    }
-                }
-                */
+               */
 
                 // Interactive chatbot loop
                 while (true)
@@ -199,8 +167,7 @@ namespace AIGemmaAssistantApp.Services
                         break;
                     }
 
-                    // Add the user's message to history.
-                    history.Add(new ChatMessage("user", userInput));
+                  
 
                     string messagesJson = JsonSerializer.Serialize(history);
 
@@ -251,6 +218,8 @@ namespace AIGemmaAssistantApp.Services
                     Console.WriteLine();
                     Console.WriteLine();
 
+                    // Add the user's message to history.
+                    history.Add(new ChatMessage("user", userInput));
                     // Save Gemma's answer for future questions.
                     history.Add(new ChatMessage("assistant", answer.ToString()));
                 }
