@@ -14,161 +14,104 @@ namespace AIGemmaAssistantApp.Services
     {
         public void StartChat()
         {
-
-            /* Question?????????
-
-                 If you can already chat with ChatGPT or Gemini, why build your own Gemma application?
-
-                The answer is: you are not building it because your application will be better than ChatGPT.
-                You are building it to learn how LLM applications actually work and to build AI features into your own software.
-
-                Think about it this way
-
-                You already know how to use SQL Server.
-
-                But you didn't learn C# by saying:
-
-                "Why should I write a C# application? I can use Excel."
-
-                You learned how software works so you can build your own systems.
-
-             */
-
-            /*
-             Console.WriteLine("Tokenizer methods:");
-
-            foreach (var method in typeof(Tokenizer).GetMethods())
+            try
             {
-                Console.WriteLine(method);
-            }
 
-            The key methods are:
+                /* Question?????????
 
-            Tokenizer.Encode(string)
-            Tokenizer.Decode(ReadOnlySpan<int>)
-            Tokenizer.ApplyChatTemplate(...)
-            Generator.AppendTokens(...)
-            Generator.GenerateNextToken()
-            Generator.GetNextTokens()
+                     If you can already chat with ChatGPT or Gemini, why build your own Gemma application?
 
-             */
+                    The answer is: you are not building it because your application will be better than ChatGPT.
+                    You are building it to learn how LLM applications actually work and to build AI features into your own software.
 
+                    Think about it this way
 
-            string modelPath = Path.Combine(
-                AppContext.BaseDirectory,
-                "AIModels",
-                "Gemma2-2B-INT4");
+                    You already know how to use SQL Server.
 
-            //string modelPath = @"C:\AIModels\Gemma2-2B-INT4";
+                    But you didn't learn C# by saying:
 
-            using var model = new Model(modelPath);
-            using var tokenizer = new Tokenizer(model);
+                    "Why should I write a C# application? I can use Excel."
 
-            string templatePath = Path.Combine(
-                modelPath,
-                "chat_template.jinja");
+                    You learned how software works so you can build your own systems.
 
-            //Console.WriteLine($"Template path: {templatePath}");
+                 */
 
-            string chatTemplate = File.ReadAllText(templatePath);
+                /*
+                 Console.WriteLine("Tokenizer methods:");
 
-            // Store conversation history.
-            var history = new List<ChatMessage>();
-
-            Console.WriteLine("Gemma is ready!");
-            Console.WriteLine("Type 'exit' to quit.");
-            Console.WriteLine();
-
-           
-
-            /*
-          
-
-                That means Gemma now understands:
-
-                <start_of_turn>user
-                        ↓
-                "What is C#?"
-                        ↓
-                <end_of_turn>
-                        ↓
-                <start_of_turn>model
-                        ↓
-                "Now generate the answer"
-
-            *****************
-                Now we need:
-
-                formattedPrompt
-                     ↓
-                Tokenizer
-                     ↓
-                Token IDs
-                     ↓
-                Generator
-                     ↓
-                Gemma response
-
-            // Convert prompt → token IDs
-            var sequences = tokenizer.Encode(formattedPrompt);
-
-            // Configure generation
-            using var generatorParams = new GeneratorParams(model);
-
-            generatorParams.SetSearchOption("max_length", 4096);
-
-            // Create generator
-            using var generator = new Generator(model, generatorParams);
-
-            // Give prompt tokens to Gemma
-            generator.AppendTokenSequences(sequences);
-
-            // Token stream for readable output
-            using var tokenizerStream = tokenizer.CreateStream();
-
-            Console.WriteLine("Gemma:");
-            Console.WriteLine();
-
-            // Generate response
-            while (!generator.IsDone())
-            {
-                generator.GenerateNextToken();
-
-                var outputTokens = generator.GetNextTokens();
-
-                foreach (var token in outputTokens)
+                foreach (var method in typeof(Tokenizer).GetMethods())
                 {
-                    Console.Write(tokenizerStream.Decode(token));
-                }
-            }
-            */
-
-            // Interactive chatbot loop
-            while (true)
-            {
-                Console.Write("You: ");
-                string? userInput = Console.ReadLine();
-
-                if (string.IsNullOrWhiteSpace(userInput))
-                    continue;
-
-                if (userInput.Equals(
-                    "exit",
-                    StringComparison.OrdinalIgnoreCase))
-                {
-                    break;
+                    Console.WriteLine(method);
                 }
 
-                // Add the user's message to history.
-                history.Add(new ChatMessage("user", userInput));
+                The key methods are:
 
-                string messagesJson = JsonSerializer.Serialize(history);
+                Tokenizer.Encode(string)
+                Tokenizer.Decode(ReadOnlySpan<int>)
+                Tokenizer.ApplyChatTemplate(...)
+                Generator.AppendTokens(...)
+                Generator.GenerateNextToken()
+                Generator.GetNextTokens()
 
-                string formattedPrompt = tokenizer.ApplyChatTemplate(
-                    chatTemplate,
-                    messagesJson,
-                    "",
-                    true);
+                 */
+
+
+                string modelPath = Path.Combine(
+                    AppContext.BaseDirectory,
+                    "AIModels",
+                    "Gemma2-2B-INT4");
+
+                //string modelPath = @"C:\AIModels\Gemma2-2B-INT4";
+
+                using var model = new Model(modelPath);
+                using var tokenizer = new Tokenizer(model);
+
+                string templatePath = Path.Combine(
+                    modelPath,
+                    "chat_template.jinja");
+
+                //Console.WriteLine($"Template path: {templatePath}");
+
+                string chatTemplate = File.ReadAllText(templatePath);
+
+                // Store conversation history.
+                var history = new List<ChatMessage>();
+
+                Console.WriteLine("Gemma is ready!");
+                Console.WriteLine("Type 'exit' to quit.");
+                Console.WriteLine("Type 'clear' to clear history.");
+                Console.WriteLine("Type 'help' to see available commands.");
+                Console.WriteLine();
+
+
+
+                /*
+
+
+                    That means Gemma now understands:
+
+                    <start_of_turn>user
+                            ↓
+                    "What is C#?"
+                            ↓
+                    <end_of_turn>
+                            ↓
+                    <start_of_turn>model
+                            ↓
+                    "Now generate the answer"
+
+                *****************
+                    Now we need:
+
+                    formattedPrompt
+                         ↓
+                    Tokenizer
+                         ↓
+                    Token IDs
+                         ↓
+                    Generator
+                         ↓
+                    Gemma response
 
                 // Convert prompt → token IDs
                 var sequences = tokenizer.Encode(formattedPrompt);
@@ -187,10 +130,8 @@ namespace AIGemmaAssistantApp.Services
                 // Token stream for readable output
                 using var tokenizerStream = tokenizer.CreateStream();
 
-                var answer = new StringBuilder();
-
+                Console.WriteLine("Gemma:");
                 Console.WriteLine();
-                Console.Write("Gemma: ");
 
                 // Generate response
                 while (!generator.IsDone())
@@ -201,21 +142,129 @@ namespace AIGemmaAssistantApp.Services
 
                     foreach (var token in outputTokens)
                     {
-                        string piece = tokenizerStream.Decode(token);
-
-                        Console.Write(piece);
-                        answer.Append(piece);
+                        Console.Write(tokenizerStream.Decode(token));
                     }
                 }
+                */
 
-                Console.WriteLine();
-                Console.WriteLine();
+                // Interactive chatbot loop
+                while (true)
+                {
+                    Console.Write("You: ");
+                    string? userInput = Console.ReadLine();
 
-                // Save Gemma's answer for future questions.
-                history.Add(new ChatMessage("assistant", answer.ToString()));
+                    // Handle end-of-input (for example, Ctrl+Z then Enter on Windows).
+                    // This condition handles a special situation: when the console has no more input to read.
+                    if (userInput is null)
+                    {
+                        Console.WriteLine("\nChatbot closed.");
+                        break;
+                    }
+
+
+                    if (userInput.Equals("help", StringComparison.OrdinalIgnoreCase))
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine("========== Gemma AI Assistant ==========");
+                        Console.WriteLine("Ask anything       - Send a question to Gemma");
+                        Console.WriteLine("clear              - Clear conversation history");
+                        Console.WriteLine("help               - Show available commands");
+                        Console.WriteLine("exit               - Close the chatbot");
+                        Console.WriteLine("========================================");
+                        Console.WriteLine();
+
+                        continue;
+                    }
+
+
+                    if (userInput.Equals("clear", StringComparison.OrdinalIgnoreCase))
+                    {
+                        history.Clear();
+
+                        Console.WriteLine("Conversation history cleared!");
+                        Console.WriteLine();
+
+                        continue;
+                    }
+
+                    if (string.IsNullOrWhiteSpace(userInput))
+                    {
+                        Console.WriteLine("Please enter a question.");
+                        continue;
+                    }
+
+
+                    if (userInput.Equals("exit",StringComparison.OrdinalIgnoreCase))
+                    {
+                        break;
+                    }
+
+                    // Add the user's message to history.
+                    history.Add(new ChatMessage("user", userInput));
+
+                    string messagesJson = JsonSerializer.Serialize(history);
+
+                    string formattedPrompt = tokenizer.ApplyChatTemplate(
+                        chatTemplate,
+                        messagesJson,
+                        "",
+                        true);
+
+                    // Convert prompt → token IDs
+                    var sequences = tokenizer.Encode(formattedPrompt);
+
+                    // Configure generation
+                    using var generatorParams = new GeneratorParams(model);
+
+                    generatorParams.SetSearchOption("max_length", 4096);
+
+                    // Create generator
+                    using var generator = new Generator(model, generatorParams);
+
+                    // Give prompt tokens to Gemma
+                    generator.AppendTokenSequences(sequences);
+
+                    // Token stream for readable output
+                    using var tokenizerStream = tokenizer.CreateStream();
+
+                    var answer = new StringBuilder();
+
+                    Console.WriteLine();
+                    Console.Write("Gemma: ");
+
+                    // Generate response
+                    while (!generator.IsDone())
+                    {
+                        generator.GenerateNextToken();
+
+                        var outputTokens = generator.GetNextTokens();
+
+                        foreach (var token in outputTokens)
+                        {
+                            string piece = tokenizerStream.Decode(token);
+
+                            Console.Write(piece);
+                            answer.Append(piece);
+                        }
+                    }
+
+                    Console.WriteLine();
+                    Console.WriteLine();
+
+                    // Save Gemma's answer for future questions.
+                    history.Add(new ChatMessage("assistant", answer.ToString()));
+                }
+
+                Console.WriteLine("Chatbot closed.");
             }
 
-            Console.WriteLine("Chatbot closed.");
+            catch (Exception ex)
+            {
+                Console.WriteLine();
+                Console.WriteLine($"Error generating response: {ex.Message}");
+                Console.WriteLine("Please try another question.");
+                Console.WriteLine();
+            }
         }
 
         /*

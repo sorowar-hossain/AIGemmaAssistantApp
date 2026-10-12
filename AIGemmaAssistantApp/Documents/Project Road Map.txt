@@ -2,7 +2,7 @@
 
 Your next AI learning roadmap
 
-Create Gemma chatbot 
+1. Create Gemma chatbot 
 	- Multiple question & Answer
 
 
