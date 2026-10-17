@@ -74,6 +74,10 @@ namespace AIGemmaAssistantApp.Services
 
                 string chatTemplate = File.ReadAllText(templatePath);
 
+                // Context window settings
+                const int maxInputTokens = 3000;
+                const int maxHistoryMessages = 8;
+
                 // Store conversation history.
                 var history = new List<ChatMessage>();
 
@@ -176,20 +180,86 @@ namespace AIGemmaAssistantApp.Services
                         break;
                     }
 
+                   
 
                     // Copy the previous conversation.
                     var messages = new List<ChatMessage>(history);
 
                     // Add the current question.
                     messages.Add(new ChatMessage("user", userInput));
-                    // Serialize the list that includes the current question.
-                    string messagesJson = JsonSerializer.Serialize(messages);
 
-                    string formattedPrompt = tokenizer.ApplyChatTemplate(
-                        chatTemplate,
-                        messagesJson,
-                        "",
-                        true);
+
+                    // Keep at most 8 previous messages (4 user/assistant turns),
+                    // plus the current question.
+                    // Keep at most 8 previous messages plus the current question.
+                    if (messages.Count > maxHistoryMessages + 1)
+                    {
+                        int messagesToRemove =
+                            messages.Count - (maxHistoryMessages + 1);
+
+                        // Remove an even number of messages to preserve complete turns.
+                        if (messagesToRemove % 2 != 0)
+                        {
+                            messagesToRemove++;
+                        }
+
+                        messages.RemoveRange(0, messagesToRemove);
+                    }
+
+
+
+                    string formattedPrompt = "";
+                    while (true)
+                    {
+                        // Rebuild the prompt using the current messages.
+                        string messagesJson = JsonSerializer.Serialize(messages);
+
+                        formattedPrompt = tokenizer.ApplyChatTemplate(
+                            chatTemplate,
+                            messagesJson,
+                            "",
+                            true);
+
+                        // Tokenize the updated prompt.
+                        var testSequences = tokenizer.Encode(formattedPrompt);
+
+                        using var testParams = new GeneratorParams(model);
+                        testParams.SetSearchOption("max_length", 4096);
+
+                        using var testGenerator = new Generator(model, testParams);
+                        testGenerator.AppendTokenSequences(testSequences);
+
+                        int promptTokens = checked((int)testGenerator.TokenCount());
+
+                        Console.WriteLine($"Input sequence tokens: {promptTokens}");
+
+                        if (promptTokens <= maxInputTokens)
+                        {
+                            break;
+                        }
+
+                        // Keep the current question, but remove older conversation turns.
+                        if (messages.Count <= 1)
+                        {
+                            Console.WriteLine(
+                                "Your question is too long. Please shorten it.");
+
+                            formattedPrompt = "";
+                            break;
+                        }
+
+                        // Remove the oldest user/assistant pair.
+                        messages.RemoveRange(0, 2);
+
+                        Console.WriteLine("Removed the oldest conversation turn.");
+                    }
+
+                    // Do not generate an answer if the prompt did not fit.
+                    if (string.IsNullOrEmpty(formattedPrompt))
+                    {
+                        continue;
+                    }
+
 
                     // Convert prompt → token IDs
                     var sequences = tokenizer.Encode(formattedPrompt);

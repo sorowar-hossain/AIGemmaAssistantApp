@@ -21,6 +21,9 @@ Practice: 1–2 sessions
 What is a context window?
 A context window is the maximum number of tokens a model can process in one sequence. 
 It includes both the prompt and the generated response.
+***The number of tokens of a text depends on the tokenizer used by your Gemma model.
+
+**Measure prompt tokens, manage old messages, and prevent the prompt from exceeding the available capacity.
 
 KV Cache: 
 Stores previously calculated Key and Value tensors to make token generation more efficient.
