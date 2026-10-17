@@ -180,7 +180,7 @@ namespace AIGemmaAssistantApp.Services
                         break;
                     }
 
-                   
+                    // Context window settings
 
                     // Copy the previous conversation.
                     var messages = new List<ChatMessage>(history);
