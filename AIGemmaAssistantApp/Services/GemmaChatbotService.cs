@@ -115,6 +115,15 @@ namespace AIGemmaAssistantApp.Services
 
                */
 
+                /*  
+                 So remember:
+                    - Generator — an object that manages generation.
+                    - GetNextTokens() — returns generated token IDs.
+                    - Decode() — converts those IDs into text.
+                    - answer.ToString() — gives you the complete response as a string.
+                 
+                 */
+
                 // Interactive chatbot loop
                 while (true)
                 {
@@ -167,9 +176,14 @@ namespace AIGemmaAssistantApp.Services
                         break;
                     }
 
-                  
 
-                    string messagesJson = JsonSerializer.Serialize(history);
+                    // Copy the previous conversation.
+                    var messages = new List<ChatMessage>(history);
+
+                    // Add the current question.
+                    messages.Add(new ChatMessage("user", userInput));
+                    // Serialize the list that includes the current question.
+                    string messagesJson = JsonSerializer.Serialize(messages);
 
                     string formattedPrompt = tokenizer.ApplyChatTemplate(
                         chatTemplate,
@@ -183,13 +197,25 @@ namespace AIGemmaAssistantApp.Services
                     // Configure generation
                     using var generatorParams = new GeneratorParams(model);
 
+                    //max_length sets the maximum total sequence length, measured in tokens,
+                    //for generation. It is not a character count or a word count.
+                    // Sequence length is the number of tokens in a sequence of text. that is user's question
                     generatorParams.SetSearchOption("max_length", 4096);
 
                     // Create generator
+                    // In your C# Gemma chatbot, the Generator is the component
+                    // This line does not produce a response yet.
+                    // It creates a Generator object that manages text generation using your Gemma model
+                    // and generation settings.
                     using var generator = new Generator(model, generatorParams);
 
                     // Give prompt tokens to Gemma
+                    // This line supplies the tokenized prompt to the generator
+                    // so it can begin generating an answer.
                     generator.AppendTokenSequences(sequences);
+
+                    // Measure the prompt length
+                    Console.WriteLine($"Prompt tokens: {generator.TokenCount()}");
 
                     // Token stream for readable output
                     using var tokenizerStream = tokenizer.CreateStream();
@@ -248,7 +274,7 @@ namespace AIGemmaAssistantApp.Services
          */
         public record ChatMessage(string role, string content);
 
-
+        
     }
 }
 

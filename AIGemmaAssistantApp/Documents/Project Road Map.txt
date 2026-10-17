@@ -18,6 +18,13 @@ Practice: 1–2 sessions
 
 
 
+What is a context window?
+A context window is the maximum number of tokens a model can process in one sequence. 
+It includes both the prompt and the generated response.
+
+KV Cache: 
+Stores previously calculated Key and Value tensors to make token generation more efficient.
+
 3. Manage context window and KV Cache
 Practice: 1–2 sessions
 - Understand how conversation history consumes tokens.
