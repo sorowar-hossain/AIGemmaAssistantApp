@@ -266,11 +266,23 @@ namespace AIGemmaAssistantApp.Services
 
                     // Configure generation
                     using var generatorParams = new GeneratorParams(model);
+                    /*
+                        Temperature 0.7: generally gives a balance between predictable and varied responses.
+                        Lower temperature: generally makes responses more predictable.
+                        Higher temperature: generally increases variation.
+                        Top-p 0.9: considers a set of likely tokens whose cumulative probability reaches the configured threshold.
+                    */
 
                     //max_length sets the maximum total sequence length, measured in tokens,
                     //for generation. It is not a character count or a word count.
                     // Sequence length is the number of tokens in a sequence of text. that is user's question
                     generatorParams.SetSearchOption("max_length", 4096);
+
+                    generatorParams.SetSearchOption("temperature", 0.7);
+                    generatorParams.SetSearchOption("top_p", 0.9);
+
+
+                 
 
                     // Create generator
                     // In your C# Gemma chatbot, the Generator is the component
@@ -295,6 +307,8 @@ namespace AIGemmaAssistantApp.Services
                     Console.WriteLine();
                     Console.Write("Gemma: ");
 
+                    const int maxNewTokens = 256;
+                    int generatedTokenCount = 0;
                     // Generate response
                     while (!generator.IsDone())
                     {
@@ -308,11 +322,18 @@ namespace AIGemmaAssistantApp.Services
 
                             Console.Write(piece);
                             answer.Append(piece);
+
+                            generatedTokenCount++;
+
+                            if (generatedTokenCount >= maxNewTokens)
+                                break;
                         }
                     }
 
                     Console.WriteLine();
+
                     Console.WriteLine();
+                    Console.WriteLine($"Newly Generated tokens: {generatedTokenCount}");
 
                     // Add the user's message to history.
                     history.Add(new ChatMessage("user", userInput));

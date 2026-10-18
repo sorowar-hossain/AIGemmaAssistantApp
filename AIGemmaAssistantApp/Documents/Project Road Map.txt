@@ -27,6 +27,21 @@ It includes both the prompt and the generated response.
 
 KV Cache: 
 Stores previously calculated Key and Value tensors to make token generation more efficient.
+*** tensors
+	It's a nemurical representation of token arranged in one or more dimention that is matrix representation.
+
+*****Understand what we are implementing
+When you chat with Gemma, it generates an answer one token at a time. 
+To generate each new token, the Transformer uses attention over earlier tokens.
+Without caching, the model may need to recompute key and value representations for previous tokens. 
+With a KV Cache, it can reuse those stored representations.
+
+******Every time GenerateNextToken() runs, 
+	  the runtime handles the model's generation state, including its KV Cache.
+
+	  Your existing Microsoft.ML.OnnxRuntimeGenAI library manages the KV Cache internally during token generation. 
+	  You don't need to create your own Key and Value tensors.
+	  ONNX Runtime GenAI library manages the KV Cache intern
 
 3. Manage context window and KV Cache
 Practice: 1–2 sessions
@@ -53,3 +68,11 @@ Portfolio project
 - Connect the local Gemma model.
 - Add document search and chat history.
 - Build a Blazor interface.
+
+5.My recommendation is to move to the next practical topic: streaming responses and improving your Gemma chatbot.
+	We can implement these features one by one:
+	1. Streaming output — display generated tokens immediately instead of waiting for the complete answer.
+	2. Conversation management — retain relevant history and clear conversations when needed.
+	3. Generation controls — configure output length and sampling options.
+	4. Error handling — handle empty input, generation errors, and model-loading failures.
+	5. Build a complete local AI assistant — combine these features in your existing C# console application.
